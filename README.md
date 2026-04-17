@@ -1,4 +1,4 @@
-# machina# Machina
+# Machina
 
 ## Structure
 
