@@ -1,0 +1,24 @@
+# database
+*.sqlite
+
+# compiled output
+dist/
+
+# bun deploy file
+node_modules.bun
+
+# Dependency directories
+node_modules/
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Claude
+.claude/

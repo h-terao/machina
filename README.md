@@ -9,10 +9,10 @@
 
 ## Workflow
 
-Workflow is a collection of actions that are executed in a specific order. Workflow starts `init_step` step, performs the action defined in the step, and then transitions to the next step based on the defined conditions. These steps would be continued until it reaches special `COMPLETE` or `ABORT` steps.
+Workflow is a collection of actions that are executed in a specific order. Workflow starts `initStep` step, performs the action defined in the step, and then transitions to the next step based on the defined conditions. These steps would be continued until it reaches special `COMPLETE` or `ABORT` steps.
 
 ```yaml
-init_step: plan
+initStep: plan
 steps:
   plan:
     action:
@@ -42,7 +42,7 @@ steps:
       overrides:
         effort: medium
     transitions:
-      - next: lint
+      - next: verify
 
   verify:
     action:
@@ -57,16 +57,27 @@ steps:
         next: impl  # back to impl for fixing issues
 
   review:
+    mutex: true # or str to support mutex
     action: ../actions/review.toml
     transitions:
       - cond: "status.code == 'approved'"
         next: COMPLETE
       - cond: "status.code == 'rejected'"
         next: impl  # back to impl for re-implementation with feedback
+    middlewares:
+      # If you want to apply middlewares only for specific steps,
+      # you can specify them in the step definition.
+      # The middleware key should be unique across the workflow.
+      reviewLogger:
+        type: logger
 
 middlewares:
   logger:
     type: logger
+    # Only apply logger middleware to the 'plan' step
+    # If not specified, the middleware would be applied to all steps by default
+    applyTo:
+      - plan
 ```
 
 ## Commands
@@ -103,10 +114,6 @@ machina task enqueue
 
 # List all workflows
 machina workflow ls
-
-# Enable/disable a workflow
-machina workflow enable <workflow_id>
-machina workflow disable <workflow_id>
 ```
 
 ## Features
