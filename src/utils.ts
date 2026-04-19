@@ -36,3 +36,23 @@ export const mergeObjects = (
   }
   return result;
 };
+
+export const defineRegistry = <T>() => {
+  const registry = new Map<string, T>();
+  return {
+    register: (id: string, value: T) => {
+      if (registry.has(id)) {
+        throw new Error(`ID ${id} is already registered`);
+      }
+      registry.set(id, value);
+    },
+    get: (id: string): T => {
+      const value = registry.get(id);
+      if (!value) {
+        throw new Error(`ID ${id} is not registered`);
+      }
+      return value;
+    },
+    has: (id: string): boolean => registry.has(id),
+  };
+};
